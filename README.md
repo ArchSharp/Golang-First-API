@@ -25,6 +25,7 @@ Run
     ## This will install gonic-gin. "Gin" is a popular web framework for the Go programming language, and "Gonic" is one of its implementations.
 4.  Create main.go file in your "Go_API_Project" folder, copy and paste below starter code into it
 
+    ```
     package main
 
     import (
@@ -42,6 +43,7 @@ Run
         r.Run(":8080")
 
     }
+    ```
 
 5.  Open VsCode terminal and run
     go run main.go
