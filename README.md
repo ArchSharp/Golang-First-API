@@ -46,4 +46,4 @@ Run
     ```
 
 5.  Open VsCode terminal and run
-    go run main.go
+    "go run main.go"
