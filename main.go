@@ -1,78 +1,69 @@
 package main
 
 import (
-	"errors"
-	"net/http"
+	"fmt"
+	"learning-golang/golang-first-api/Controllers"
+	"learning-golang/golang-first-api/Database"
+	"learning-golang/golang-first-api/Model"
+	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 )
 
-type todo struct {
-	ID        string `json:"id"`
-	Item      string `json:"item"`
-	Owner      *string `json:"owner,omitempty"`
-	Completed bool   `json:"completed"`
+type Repository struct {
+	DB *gorm.DB
 }
 
-var todos = []todo{
-	{ID: "1", Item: "clean room", Completed: false},
-	{ID: "2", Item: "read book", Completed: false},
-	{ID: "3", Item: "record video", Completed: false},
+func SetupRoutes(router *gin.Engine, r *Controllers.Repository) {
+	app := router.Group("/api")
+	app.GET("/Todos", Controllers.GetTodos)
+	app.GET("/Todos/:id", Controllers.GetTodo)
+	app.PATCH("/Todos/:id", Controllers.ToggleTodoStatus)
+	app.POST("/Todos", func(c *gin.Context) {
+		Controllers.AddTodo(r, c) // Pass the r instance to the AddTodo function
+	})
 }
 
-func getTodos(context *gin.Context){
-	context.IndentedJSON(http.StatusOK, todos)
-}
+func main() {
 
-func addTodo(context *gin.Context){
-	var newTodo todo
-
-	if err := context.BindJSON(&newTodo); err != nil {
-		return
-	}
-
-	todos = append(todos, newTodo)
-	context.IndentedJSON(http.StatusCreated, newTodo)
-}
-
-func getTodoById(id string) (*todo, error){
-	for i, t := range todos {
-		if t.ID == id {
-			return &todos[i], nil
-		}
-	}
-
-	return nil, errors.New("todo not found")
-}
-
-func getTodo(context *gin.Context){
-	id := context.Param("id")
-	todo, err := getTodoById(id)
+	port := "5000"
+	ip := "127.0.0.1"
+	address := ip + ":" + port
+	app := gin.Default()
+	gin.SetMode(gin.ReleaseMode)
+	app.ForwardedByClientIP = true
+	app.SetTrustedProxies([]string{ip})
+	// app.Use(Database.Connection("user=postgres password=Alade1&&& host=localhost port=5432 dbname=quickee sslmode=disable"))
+	err := godotenv.Load(".env")
 	if err != nil {
-		context.IndentedJSON(http.StatusNotFound, gin.H{"message": "Todo not found"})
-		return
+		log.Fatal(err)
 	}
+	config := &Database.Config{
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		Password: os.Getenv("DB_PASS"),
+		User:     os.Getenv("DB_USER"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
+		DBName:   os.Getenv("DB_NAME"),
+	}
+	db, err := Database.NewConnection(config)
 
-	context.IndentedJSON(http.StatusOK, todo)
-}
-
-func toggleTodoStatus(context *gin.Context){
-	id := context.Param("id")
-	todo, err := getTodoById(id)
 	if err != nil {
-		context.IndentedJSON(http.StatusNotFound, gin.H{"message": "Todo not found"})
-		return
+		log.Fatal("could not load the database")
+	}
+	err = Model.MigrateTodos(db)
+	if err != nil {
+		log.Fatal("could not migrate db")
 	}
 
-	todo.Completed = !todo.Completed
-	context.IndentedJSON(http.StatusOK, todo)
-}
+	r := &Controllers.Repository{
+		DB: db,
+	}
 
-func main(){
-	router := gin.Default()
-	router.GET("/todos", getTodos)
-	router.GET("/todos/:id", getTodo)
-	router.PATCH("/todos/:id", toggleTodoStatus)
-	router.POST("/todos", addTodo)
-	router.Run("localhost:5000")
+	SetupRoutes(app, r)
+	fmt.Println("Server running on " + address)
+	app.Run(address)
 }
