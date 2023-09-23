@@ -6,7 +6,7 @@ import (
 )
 
 var Todos = []Model.Todo{
-	{ID: 1, Item: "clean room", Owner: funcs.Address("raphael olaiyapo"), Completed: false},
-	{ID: 2, Item: "read book", Owner: funcs.Address("alade tunji"), Completed: false},
-	{ID: 3, Item: "record video", Owner: funcs.Address("aduragbemi adegbite"), Completed: false},
+	{Item: "clean room", Owner: funcs.Address("raphael olaiyapo"), Completed: false},
+	{Item: "read book", Owner: funcs.Address("alade tunji"), Completed: false},
+	{Item: "record video", Owner: funcs.Address("aduragbemi adegbite"), Completed: false},
 }

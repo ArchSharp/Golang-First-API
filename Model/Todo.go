@@ -1,14 +1,22 @@
 package Model
 
 import (
+	// uuid "github.com/jackc/pgtype/ext/gofrs-uuid"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
+//	type Todo struct {
+//		ID        uint    `gorm:"primary key;autoIncrement" json:"id"`
+//		Item      string  `json:"item"`
+//		Owner     *string `json:"owner,omitempty"`
+//		Completed bool    `json:"completed"`
+//	}
 type Todo struct {
-	ID        uint    `gorm:"primary key;autoIncrement" json:"id"`
-	Item      string  `json:"item"`
-	Owner     *string `json:"owner,omitempty"`
-	Completed bool    `json:"completed"`
+	ID        uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"id"`
+	Item      string    `json:"item"`
+	Owner     *string   `json:"owner,omitempty"`
+	Completed bool      `json:"completed"`
 }
 
 type AddTodo struct {

@@ -20,7 +20,9 @@ type Repository struct {
 func SetupRoutes(router *gin.Engine, r *Controllers.Repository) {
 	app := router.Group("/api")
 	app.GET("/Todos", Controllers.GetTodos)
-	app.GET("/Todos/:id", Controllers.GetTodo)
+	app.GET("/Todos/:id", func(c *gin.Context) {
+		Controllers.GetTodo(r, c) // Pass the r instance to the AddTodo function
+	})
 	app.PATCH("/Todos/:id", Controllers.ToggleTodoStatus)
 	app.POST("/Todos", func(c *gin.Context) {
 		Controllers.AddTodo(r, c) // Pass the r instance to the AddTodo function
