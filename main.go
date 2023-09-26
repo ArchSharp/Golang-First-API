@@ -5,29 +5,13 @@ import (
 	"learning-golang/golang-first-api/Controllers"
 	"learning-golang/golang-first-api/Database"
 	"learning-golang/golang-first-api/Model"
+	"learning-golang/golang-first-api/Routes"
 	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"gorm.io/gorm"
 )
-
-type Repository struct {
-	DB *gorm.DB
-}
-
-func SetupRoutes(router *gin.Engine, r *Controllers.Repository) {
-	app := router.Group("/api")
-	app.GET("/Todos", Controllers.GetTodos)
-	app.GET("/Todos/:id", func(c *gin.Context) {
-		Controllers.GetTodo(r, c) // Pass the r instance to the AddTodo function
-	})
-	app.PATCH("/Todos/:id", Controllers.ToggleTodoStatus)
-	app.POST("/Todos", func(c *gin.Context) {
-		Controllers.AddTodo(r, c) // Pass the r instance to the AddTodo function
-	})
-}
 
 func main() {
 
@@ -65,7 +49,7 @@ func main() {
 		DB: db,
 	}
 
-	SetupRoutes(app, r)
+	Routes.TodoRoute(app, r)
 	fmt.Println("Server running on " + address)
 	app.Run(address)
 }
