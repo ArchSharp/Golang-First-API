@@ -2,6 +2,7 @@ package Controllers
 
 import (
 	"errors"
+	"fmt"
 	"learning-golang/golang-first-api/Datas"
 	"learning-golang/golang-first-api/Model"
 	"net/http"
@@ -29,7 +30,8 @@ func GetTodos(r *Repository, context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "todos fetched successfully", "data": todos})
+	response := fmt.Sprintf("%d todos fetched successfully", len(todos))
+	context.JSON(http.StatusOK, gin.H{"data": todos, "message": response})
 }
 
 func AddTodo(r *Repository, context *gin.Context) {
