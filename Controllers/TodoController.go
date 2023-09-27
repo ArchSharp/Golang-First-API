@@ -40,7 +40,7 @@ func AddTodo(r *Repository, context *gin.Context) {
 		return
 	}
 
-	if err := newTodo.Validate(); err != nil {
+	if err := newTodo.Validate(); len(err) > 0 {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}

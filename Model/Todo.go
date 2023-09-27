@@ -4,8 +4,11 @@ import (
 	// uuid "github.com/jackc/pgtype/ext/gofrs-uuid"
 
 	// "log"
+
 	"log"
+	"reflect"
 	"regexp"
+	"strings"
 
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -33,7 +36,7 @@ type Todo struct {
 
 func (t *Todo) Validate() []string {
 	validate := validator.New()
-	validate.RegisterValidation("item", validateItem)
+	_ = validate.RegisterValidation("item", validateItem)
 
 	translator := en.New()
 	uni := ut.New(translator, translator)
@@ -56,12 +59,33 @@ func (t *Todo) Validate() []string {
 		return t
 	})
 
+	_ = validate.RegisterTranslation("item", trans, func(ut ut.Translator) error {
+		return ut.Add("item", "{0} cannot have number", true) // see universal-translator for details
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("item", fe.Field())
+		return t
+	})
+
+	// _ = validate.RegisterValidation("item", func(fl validator.FieldLevel) bool {
+	// 	return len(fl.Field().String()) > 6
+	// })
+
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+
 	err := validate.Struct(t)
 
 	errorsArray := []string{}
-	for _, e := range err.(validator.ValidationErrors) {
-		errText := e.Translate(trans)
-		errorsArray = append(errorsArray, errText)
+	if err != nil {
+		for _, e := range err.(validator.ValidationErrors) {
+			errText := e.Translate(trans)
+			errorsArray = append(errorsArray, errText)
+		}
 	}
 
 	// return validate.Struct(t)
@@ -72,6 +96,7 @@ func validateItem(fl validator.FieldLevel) bool {
 	str := fl.Field().String()
 	matches, _ := regexp.MatchString(`^[a-zA-Z ]*$`, str)
 
+	// fmt.Println(matches)
 	if matches == false {
 		return false
 	}
