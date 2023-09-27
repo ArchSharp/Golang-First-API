@@ -7,6 +7,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	// "github.com/go-playground/validator/v10"
+
 	// uuid "github.com/jackc/pgtype/ext/gofrs-uuid"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -34,6 +37,11 @@ func AddTodo(r *Repository, context *gin.Context) {
 
 	if err := context.ShouldBindJSON(&newTodo); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := newTodo.Validate(); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
