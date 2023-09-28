@@ -1,13 +1,18 @@
 package Controllers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"learning-golang/golang-first-api/Datas"
+	"learning-golang/golang-first-api/Functions"
 	"learning-golang/golang-first-api/Model"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 
 	// "github.com/go-playground/validator/v10"
 
@@ -156,6 +161,41 @@ func UpdateTodo(r *Repository, context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, gin.H{"message": "Todo updated successfully", "data": todo})
+}
+
+func GetBillsCategories(context *gin.Context) {
+	// Create an HTTP client with authorization headers.
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal(err)
+	}
+	baseURL := os.Getenv("BASEURL")
+	token := os.Getenv("FLWSECK_TEST")
+	client := Functions.CustomHTTPClient(token)
+	index := context.Request.URL.Query().Get("internet")
+	urlText := fmt.Sprintf("%s/?internet=%s", baseURL, index)
+	// fmt.Println(urlText)
+
+	// You can now use the 'client' to make requests with the desired headers.
+	// For example, to make a GET request:
+	resp, err := client.Get(urlText)
+	if err != nil {
+		fmt.Printf("Error making GET request: %v\n", err)
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to make the request"})
+		return
+	}
+	defer resp.Body.Close()
+
+	// Decode the response body into a generic map.
+	var apiResponse map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
+		fmt.Printf("Error decoding response body: %v\n", err)
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode response body"})
+		return
+	}
+
+	// Set the response status and return the decoded JSON data.
+	context.JSON(resp.StatusCode, apiResponse)
 }
 
 func ParseUUID(id string) (*string, error) {

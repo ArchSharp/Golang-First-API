@@ -23,4 +23,8 @@ func TodoRoute(router *gin.Engine, r *Controllers.Repository) {
 	app.POST("/Todos", func(c *gin.Context) {
 		Controllers.AddTodo(r, c) // Pass the r instance to the AddTodo function
 	})
+
+	app.GET("/BillCategories", func(c *gin.Context) {
+		Controllers.GetBillsCategories(c)
+	})
 }
