@@ -2,11 +2,12 @@ package Routes
 
 import (
 	"learning-golang/golang-first-api/Controllers"
+	"learning-golang/golang-first-api/Model"
 
 	"github.com/gin-gonic/gin"
 )
 
-func TodoRoute(router *gin.Engine, r *Controllers.Repository) {
+func TodoRoute(router *gin.Engine, r *Model.Repository) {
 	app := router.Group("/api")
 	app.GET("/Todos", func(c *gin.Context) {
 		Controllers.GetTodos(r, c)
@@ -24,7 +25,7 @@ func TodoRoute(router *gin.Engine, r *Controllers.Repository) {
 		Controllers.AddTodo(r, c) // Pass the r instance to the AddTodo function
 	})
 
-	app.GET("/BillCategories", func(c *gin.Context) {
+	app.POST("/BillCategories", func(c *gin.Context) {
 		Controllers.GetBillsCategories(c)
 	})
 }

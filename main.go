@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"learning-golang/golang-first-api/Controllers"
 	"learning-golang/golang-first-api/Database"
 	"learning-golang/golang-first-api/Model"
 	"learning-golang/golang-first-api/Routes"
@@ -45,7 +44,7 @@ func main() {
 		log.Fatal("could not migrate db")
 	}
 
-	r := &Controllers.Repository{
+	r := &Model.Repository{
 		DB: db,
 	}
 

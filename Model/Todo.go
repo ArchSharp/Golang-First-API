@@ -34,6 +34,15 @@ type Todo struct {
 	Completed bool      `json:"completed"`
 }
 
+type Repository struct {
+	DB *gorm.DB
+}
+
+type GetBillsCatPayload struct {
+	QueryParam string
+	Index      string
+}
+
 func (t *Todo) Validate() []string {
 	validate := validator.New()
 	_ = validate.RegisterValidation("item", validateItem)
@@ -113,10 +122,6 @@ func validateUUID(fl validator.FieldLevel) bool {
 	}
 
 	return true
-}
-
-type Repository struct {
-	DB *gorm.DB
 }
 
 func MigrateTodos(db *gorm.DB) error {

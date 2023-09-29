@@ -18,16 +18,11 @@ import (
 
 	// uuid "github.com/jackc/pgtype/ext/gofrs-uuid"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 var todos = Datas.Todos
 
-type Repository struct {
-	DB *gorm.DB
-}
-
-func GetTodos(r *Repository, context *gin.Context) {
+func GetTodos(r *Model.Repository, context *gin.Context) {
 	var todos []Model.Todo
 
 	if err := r.DB.Find(&todos).Error; err != nil {
@@ -39,7 +34,7 @@ func GetTodos(r *Repository, context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"data": todos, "message": response})
 }
 
-func AddTodo(r *Repository, context *gin.Context) {
+func AddTodo(r *Model.Repository, context *gin.Context) {
 	var newTodo Model.Todo
 
 	if err := context.ShouldBindJSON(&newTodo); err != nil {
@@ -70,7 +65,7 @@ func GetTodoById(id uuid.UUID) (*Model.Todo, error) {
 	return nil, errors.New("todo not found")
 }
 
-func GetTodo(r *Repository, context *gin.Context) {
+func GetTodo(r *Model.Repository, context *gin.Context) {
 	newTodo := Model.Todo{}
 	id := context.Param("id")
 
@@ -89,7 +84,7 @@ func GetTodo(r *Repository, context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"message": "book id fetched successfully", "data": newTodo})
 }
 
-func PatchTodo(r *Repository, context *gin.Context) {
+func PatchTodo(r *Model.Repository, context *gin.Context) {
 	id := context.Param("id")
 
 	// Parse the UUID from the query parameter string
@@ -128,7 +123,7 @@ func PatchTodo(r *Repository, context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"message": "Todo updated successfully", "data": todo})
 }
 
-func UpdateTodo(r *Repository, context *gin.Context) {
+func UpdateTodo(r *Model.Repository, context *gin.Context) {
 	id := context.Param("id")
 
 	// Parse the UUID from the query parameter string
@@ -172,8 +167,13 @@ func GetBillsCategories(context *gin.Context) {
 	baseURL := os.Getenv("BASEURL")
 	token := os.Getenv("FLWSECK_TEST")
 	client := Functions.CustomHTTPClient(token)
-	index := context.Request.URL.Query().Get("internet")
-	urlText := fmt.Sprintf("%s/?internet=%s", baseURL, index)
+	var queryParam Model.GetBillsCatPayload
+	if err := context.ShouldBindJSON(&queryParam); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error-1": err.Error()})
+		return
+	}
+
+	urlText := fmt.Sprintf("%s?%s=%s", baseURL, queryParam.QueryParam, queryParam.Index)
 	// fmt.Println(urlText)
 
 	// You can now use the 'client' to make requests with the desired headers.
