@@ -80,6 +80,14 @@ func AddTodo(r *Model.Repository, context *gin.Context) {
 // 	return nil, errors.New("todo not found")
 // }
 
+// @Summary Get a todo
+// @Description Get a todo from list of todos.
+// @Tags Todos
+// @Accept json
+// @Produce json
+// @Param id path string true "Todo ID"
+// @Success 200 {object} Model.Todo
+// @Router /Todos/{id} [get]
 func GetTodo(r *Model.Repository, context *gin.Context) {
 	newTodo := Model.Todo{}
 	id := context.Param("id")
@@ -171,6 +179,35 @@ func UpdateTodo(r *Model.Repository, context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, gin.H{"message": "Todo updated successfully", "data": todo})
+}
+
+// @Summary Delete a todo
+// @Description Delete a todo from the list of todos.
+// @Tags Todos
+// @Accept json
+// @Produce json
+// @Param id path string true "Todo ID"
+// @Success 204 "No Content"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 404 {string} string "Not Found"
+// @Router /Todos/{id} [delete]
+func DeleteTodo(r *Model.Repository, context *gin.Context) {
+	newTodo := Model.Todo{}
+	id := context.Param("id")
+
+	// Parse the UUID from the query parameter string
+	uid, err := ParseUUID(id)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid UUID"})
+		return
+	}
+
+	if err := r.DB.Where("id = ?", uid).Delete(&newTodo).Error; err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "could not get todo"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "todo id deleted successfully"})
 }
 
 // @Summary Bill categories

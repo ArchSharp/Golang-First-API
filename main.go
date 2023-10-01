@@ -16,14 +16,14 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title           Swagger Example API
+// @title           Todo API
 // @version         1.0
-// @description     This is a sample server celler server.
+// @description     This is a Todo CRUD application.
 // @termsOfService  http://swagger.io/terms/
 
-// @contact.name   API Support
-// @contact.url    http://www.swagger.io/support
-// @contact.email  support@swagger.io
+// @contact.name   Raphael Olaiyapo
+// @contact.url    https://archdemy.netlify.app/
+// @contact.email  raphael.tunji@yahoo.com
 
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
@@ -39,8 +39,8 @@ func main() {
 	port := "5000"
 	ip := "127.0.0.1"
 	address := ip + ":" + port
-	docs.SwaggerInfo.Title = "Swagger Example API"
-	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
+	docs.SwaggerInfo.Title = "Todo API"
+	docs.SwaggerInfo.Description = "This is a Todo CRUD application."
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = address
 	docs.SwaggerInfo.BasePath = "/api"
@@ -53,7 +53,7 @@ func main() {
 	// CORS middleware configuration
 	corsConfig := cors.New(cors.Config{
 		AllowOrigins:     []string{"*"}, // Change this to your actual frontend origin(s)
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"},
 		AllowHeaders:     []string{"*"}, // Change this to your allowed headers
 		AllowCredentials: true,
 	})
