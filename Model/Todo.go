@@ -21,12 +21,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//	type Todo struct {
-//		ID        uint    `gorm:"primary key;autoIncrement" json:"id"`
-//		Item      string  `json:"item"`
-//		Owner     *string `json:"owner,omitempty"`
-//		Completed bool    `json:"completed"`
-//	}
 type Todo struct {
 	ID        uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"id"`
 	Item      string    `json:"item" validate:"required,item"` // custom validation

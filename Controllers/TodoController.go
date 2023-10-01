@@ -63,7 +63,7 @@ func AddTodo(r *Model.Repository, context *gin.Context) {
 	}
 
 	if err := r.DB.Create(&newTodo).Error; err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"message": "could not create book"})
+		context.JSON(http.StatusBadRequest, gin.H{"message": "could not create todo"})
 		return
 	}
 
