@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"learning-golang/golang-first-api/Datas"
+
+	// "learning-golang/golang-first-api/Datas"
 	"learning-golang/golang-first-api/Functions"
 	"learning-golang/golang-first-api/Model"
 	"log"
@@ -20,8 +21,14 @@ import (
 	"github.com/google/uuid"
 )
 
-var todos = Datas.Todos
+// var todos = Datas.Todos
 
+// @Summary Get a list of todos
+// @Description Get a list of all todos.
+// @Tags Todos
+// @Produce json
+// @Success 200 {object} []Model.Todo
+// @Router /Todos [get]
 func GetTodos(r *Model.Repository, context *gin.Context) {
 	var todos []Model.Todo
 
@@ -34,6 +41,14 @@ func GetTodos(r *Model.Repository, context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"data": todos, "message": response})
 }
 
+// @Summary Add a todo
+// @Description Add a todo to list of todos.
+// @Tags Todos
+// @Accept json
+// @Produce json
+// @Param Todo body	Model.AddTodoDto true "Add Todo"
+// @Success 200 {object} Model.Todo
+// @Router /Todos [post]
 func AddTodo(r *Model.Repository, context *gin.Context) {
 	var newTodo Model.Todo
 
@@ -55,15 +70,15 @@ func AddTodo(r *Model.Repository, context *gin.Context) {
 	context.IndentedJSON(http.StatusCreated, newTodo)
 }
 
-func GetTodoById(id uuid.UUID) (*Model.Todo, error) {
-	for i, t := range todos {
-		if t.ID == id {
-			return &todos[i], nil
-		}
-	}
+// func GetTodoById(id uuid.UUID) (*Model.Todo, error) {
+// 	for i, t := range todos {
+// 		if t.ID == id {
+// 			return &todos[i], nil
+// 		}
+// 	}
 
-	return nil, errors.New("todo not found")
-}
+// 	return nil, errors.New("todo not found")
+// }
 
 func GetTodo(r *Model.Repository, context *gin.Context) {
 	newTodo := Model.Todo{}
@@ -158,6 +173,14 @@ func UpdateTodo(r *Model.Repository, context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"message": "Todo updated successfully", "data": todo})
 }
 
+// @Summary Bill categories
+// @Description Get bill categories.
+// @Tags Flutterwave
+// @Accept json
+// @Produce json
+// @Param Todo body	Model.GetBillsCatPayload true "Bill Categories"
+// @Success 200 {object} interface{} "Successful response"
+// @Router /BillCategories [post]
 func GetBillsCategories(context *gin.Context) {
 	// Create an HTTP client with authorization headers.
 	err := godotenv.Load(".env")

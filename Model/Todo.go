@@ -34,6 +34,18 @@ type Todo struct {
 	Completed bool      `json:"completed"`
 }
 
+type AddTodoDto struct {
+	Item      string  `json:"item" validate:"required,item"` // custom validation
+	Owner     *string `json:"owner,omitempty" validate:"required,min=2,max=100"`
+	Completed bool    `json:"completed"`
+}
+
+type BillDto struct {
+	Item      string  `json:"item" validate:"required,item"` // custom validation
+	Owner     *string `json:"owner,omitempty" validate:"required,min=2,max=100"`
+	Completed bool    `json:"completed"`
+}
+
 type Repository struct {
 	DB *gorm.DB
 }
