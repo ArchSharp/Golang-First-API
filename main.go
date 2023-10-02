@@ -89,6 +89,6 @@ func main() {
 
 	Routes.TodoRoute(app, r)
 	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	fmt.Println("Server running on " + address)
+	fmt.Println("Server running on http://" + address + "/swagger/index.html")
 	app.Run(address)
 }

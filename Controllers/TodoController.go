@@ -202,8 +202,15 @@ func DeleteTodo(r *Model.Repository, context *gin.Context) {
 		return
 	}
 
-	if err := r.DB.Where("id = ?", uid).Delete(&newTodo).Error; err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"message": "could not get todo"})
+	// Attempt to delete the todo
+	result := r.DB.Where("id = ?", uid).Delete(&newTodo)
+	if result.Error != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to delete todo"})
+		return
+	}
+
+	if result.RowsAffected == 0 {
+		context.JSON(http.StatusNotFound, gin.H{"message": "Todo not found"})
 		return
 	}
 
