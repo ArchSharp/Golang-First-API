@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -22,10 +23,13 @@ import (
 )
 
 type Todo struct {
+	// gorm.Model
 	ID        uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"id"`
 	Item      string    `json:"item" validate:"required,item"` // custom validation
 	Owner     *string   `json:"owner,omitempty" validate:"required,min=2,max=100"`
 	Completed bool      `json:"completed"`
+	UpdatedAt time.Time `gorm:"type:timestamp" json:"-"`
+	CreatedAt time.Time `gorm:"type:timestamp" json:"-"`
 }
 
 type AddTodoDto struct {
@@ -125,6 +129,10 @@ func validateUUID(fl validator.FieldLevel) bool {
 }
 
 func MigrateTodos(db *gorm.DB) error {
-	err := db.AutoMigrate(&Todo{})
+	// Add all your table models here
+	models := []interface{}{&Todo{}}
+
+	// AutoMigrate all specified tables
+	err := db.AutoMigrate(models...)
 	return err
 }
