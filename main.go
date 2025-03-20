@@ -7,7 +7,6 @@ import (
 	"learning-golang/golang-first-api/Routes"
 	"learning-golang/golang-first-api/docs"
 	"log"
-	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -36,7 +35,7 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-	port := "5000"
+	port := "8080"
 	ip := "127.0.0.1"
 	address := ip + ":" + port
 	docs.SwaggerInfo.Title = "Todo API"
@@ -65,15 +64,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	config := &Database.Config{
-		Host:     os.Getenv("DB_HOST"),
-		Port:     os.Getenv("DB_PORT"),
-		Password: os.Getenv("DB_PASS"),
-		User:     os.Getenv("DB_USER"),
-		SSLMode:  os.Getenv("DB_SSLMODE"),
-		DBName:   os.Getenv("DB_NAME"),
-	}
-	db, err := Database.NewConnection(config)
+	db, err := Database.NewConnection()
 
 	if err != nil {
 		log.Fatal("could not load the database")
